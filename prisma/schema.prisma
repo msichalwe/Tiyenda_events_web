@@ -1,0 +1,408 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  access_token      String
+  expires_at        BigInt
+  id_token          String
+  provider          String
+  providerAccountId String
+  scope             String
+  token_type        String
+  session_state     String?
+  type              String
+  userId            String  @db.ObjectId
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id") @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model PasswordResetToken {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model TwoFactorToken {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model TwoFactorConfirmation {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  userId String @unique @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id                    String                 @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt             DateTime?              @default(now())
+  email                 String?                @unique
+  emailVerified         DateTime?
+  hashedPassword        String?
+  fireBaseId            String?
+  image                 String?
+  phoneNumber           String?
+  name                  String?
+  updatedAt             DateTime?              @updatedAt
+  accounts              Account[]
+  Session               Session[]
+  organizerId           String?                @db.ObjectId
+  organizer             Organizer?             @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  organizerRole         CompanyRole?           @default(USER)
+  Event                 Event[]
+  followedIds           String[]               @db.ObjectId
+  role                  UserRole               @default(USER)
+  EventView             EventView[]
+  Order                 Order[]
+  OrderItem             OrderItem[]
+  isTwoFactorEnabled    Boolean                @default(false)
+  OrganizerInvitations  OrganizerInvitations[]
+  TwoFactorConfirmation TwoFactorConfirmation?
+  nofications           Notifications?
+  address               String?
+  city                  String?
+  country               String?
+  zip                   String?
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum NotifyMeOpts {
+  none
+  all
+  favorite
+}
+
+model Notifications {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  notify_me          NotifyMeOpts @default(none)
+  communication_mail Boolean      @default(false)
+  marketing_mail     Boolean      @default(false)
+  security_mail      Boolean      @default(true)
+
+  userId String @unique @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Organizer {
+  id                   String                 @id @default(auto()) @map("_id") @db.ObjectId
+  name                 String
+  description          String?
+  imageUrl             String?
+  facebook             String?
+  x                    String?
+  instagram            String?
+  contactPhone         String?
+  contactEmail         String?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  users                User[]
+  events               Event[]
+  OrganizerInvitations OrganizerInvitations[]
+  Transaction          Transaction[]
+  FundsRequst          FundsRequst[]
+
+  @@map("organizers")
+}
+
+model OrganizerInvitations {
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  organizerId String           @db.ObjectId
+  organizer   Organizer?       @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  userId      String           @db.ObjectId
+  user        User?            @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  status      InvitationStatus @default(PENDING)
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+}
+
+enum CompanyRole {
+  USER
+  OWNER
+}
+
+enum EventStatus {
+  UPCOMING
+  PAST
+  CANCELLED
+  ONGOING
+}
+
+model Event {
+  id                 String       @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  name               String
+  description        String?
+  startDate          DateTime?
+  endDate            DateTime?
+  startTime          DateTime?
+  endTime            DateTime?
+  formattedStartDate String?
+  formattedEndDate   String?
+  formattedStartTime String?
+  formattedEndTime   String?
+  location           Json?
+  locationType       String?
+  address            String?
+  isFeatured         Boolean?     @default(false)
+  image              String?
+  organizerId        String?      @db.ObjectId
+  organizer          Organizer?   @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  ticketLimit        Int?
+  Order              Order[]
+  userId             String       @db.ObjectId
+  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status             EventStatus? @default(UPCOMING)
+  categoryId         String?      @db.ObjectId
+  Category           Category?    @relation(fields: [categoryId], references: [id])
+  assets             String[]
+  isPublished        Boolean      @default(false)
+  Ticket             Ticket[]
+  gallery            Gallery[]
+  EventView          EventView[]
+  isRefundPolicy     Boolean      @default(false)
+  refundPolicy       String?
+
+  @@map("events")
+}
+
+model EventView {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventId   String   @db.ObjectId
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("eventViews")
+}
+
+model Gallery {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  url       String
+  eventId   String   @db.ObjectId
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("gallery")
+}
+
+model Category {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  description String?
+  imageUrl    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  events      Event[]
+  isPublshed  Boolean  @default(false)
+
+  @@map("categories")
+}
+
+model Order {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  userId      String        @db.ObjectId
+  eventId     String        @db.ObjectId
+  total       Float
+  user        User          @relation(fields: [userId], references: [id])
+  event       Event         @relation(fields: [eventId], references: [id])
+  OrderItem   OrderItem[]
+  orderNumber Int
+  Transaction Transaction[]
+  status      OrderStatus   @default(PENDING)
+
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  REFUNDED
+}
+
+model Ticket {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type        String?
+  name        String?
+  price       String?
+  qrCode      String?
+  startDate   DateTime?
+  endDate     DateTime?
+  startTime   DateTime?
+  endTime     DateTime?
+  ticketLimit String?
+  minQuantity String?
+  maxQuantity String?
+  description String?
+  eventId     String      @db.ObjectId
+  event       Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  OrderItem   OrderItem[]
+
+  @@map("tickets")
+}
+
+model OrderItem {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  orderId       String          @db.ObjectId
+  ticketId      String          @db.ObjectId
+  status        OrderItemStatus @default(AVAILABLE)
+  qrcode        String?
+  userId        String?         @db.ObjectId
+  user          User?           @relation(fields: [userId], references: [id])
+  order         Order           @relation(fields: [orderId], references: [id])
+  ticket        Ticket          @relation(fields: [ticketId], references: [id])
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  price         String?
+  RefundRequest RefundRequest[]
+
+  @@map("orderItems")
+}
+
+enum OrderItemStatus {
+  AVAILABLE
+  USED
+  EXPIRED
+  PENDING_REFUND
+  REFUNDED
+}
+
+model Transaction {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  accRef      String?    @db.ObjectId
+  Order       Order?     @relation(fields: [accRef], references: [id], onDelete: Cascade)
+  organizerId String?    @db.ObjectId
+  organizer   Organizer? @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+
+  customerAddress                  String?
+  customerEmail                    String?
+  customerName                     String?
+  customerPhone                    String?
+  customerZip                      String?
+  customerCity                     String?
+  customerCountry                  String?
+  fraudAlert                       String?
+  fraudExplnation                  String?
+  mobilePaymentRequest             String?
+  result                           String?
+  resultExplanation                String?
+  transactionAmount                String?
+  transactionApproval              String?
+  transactionCurrency              String?
+  transactionFinalAmount           String?
+  transactionFinalCurrency         String?
+  transactionNetAmount             String?
+  transactionRolloingReserveAmount String?
+  transactionRolloingReserveDate   String?
+  transactionSettlementDate        String?
+  transactionToken                 String?
+
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
+  @@map("transactions")
+}
+
+model FundsRequst {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  amount      String
+  type        RequestTypes  @default(MOBILE_MONEY)
+  bankName    String?
+  accountName String?
+  accountNo   String?
+  phone       String?
+  organizerId String        @db.ObjectId
+  organizer   Organizer     @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  status      RequestStatus @default(PENDING)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  comment     String?
+
+  @@map("fundsRequests")
+}
+
+model RefundRequest {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  amount           String
+  orderItemId      String        @db.ObjectId
+  orderItem        OrderItem     @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  status           RequestStatus @default(PENDING)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  comment          String?
+  transactionToken String?
+
+  @@map("refundRequests")
+}
+
+enum RequestTypes {
+  BANK
+  MOBILE_MONEY
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  DECLINED
+}
