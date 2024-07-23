@@ -25,6 +25,9 @@ import {
 import { cn } from '@/lib/utils'
 import { ScrollArea } from './scroll-area'
 
+
+type E164Number = string; // Define the E164Number type as a string
+
 type PhoneInputProps = Omit<
 	React.InputHTMLAttributes<HTMLInputElement>,
 	'onChange' | 'value'
@@ -55,10 +58,10 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
 					onChange={(value) => onChange?.(value as E164Number || '')}
 					{...props}
 				/>
-			)
+			);
 		},
-	)
-PhoneInput.displayName = 'PhoneInput'
+	);
+PhoneInput.displayName = 'PhoneInput';
 
 const InputComponent = React.forwardRef<HTMLInputElement, InputProps>(
 	({ className, ...props }, ref) => (
