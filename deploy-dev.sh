@@ -16,8 +16,8 @@ echo "Installing dependencies..."
 npm install --legacy-peer-deps
 
 # Build the application
-echo "Building the application..."
-npm run build
+# echo "Building the application..."
+# npm run build
 
 # Stop the production service if it's still running
 echo "Ensuring the production service is stopped..."
