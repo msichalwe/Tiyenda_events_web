@@ -13,11 +13,11 @@ git pull origin main
 
 # Install any new dependencies
 echo "Installing dependencies..."
-npm install --legacy-peer-deps
+pnpm install 
 
 # Build the application
 echo "Building the application..."
-npm run build
+pnpm run build
 
 # Stop the development service if it's still running
 echo "Ensuring the development service is stopped..."

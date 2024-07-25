@@ -7,13 +7,17 @@ cd /root/projects/Tiyenda_events_web
 echo "Stopping the production service if it's running..."
 sudo systemctl stop nextjs-app
 
+#Ensure that the dev server stopped if running
+echo "Stopping dev server service if it's running..."
+sudo systemctl stop nextjs-dev
+
 # Fetch the latest changes from the GitHub repository
 echo "Pulling the latest changes from the repository..."
 git pull origin main
 
 # Install any new dependencies
 echo "Installing dependencies..."
-npm install --legacy-peer-deps
+pnpm install
 
 # Build the application
 # echo "Building the application..."
