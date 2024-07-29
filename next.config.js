@@ -2,6 +2,9 @@
 const nextConfig = {
 	reactStrictMode: true,
 	swcMinify: true,
+	experimental: {
+		nprogress: true,
+	},
 	images: {
 		domains: [
 			'localhost',

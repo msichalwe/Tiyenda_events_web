@@ -79,3 +79,25 @@ export async function GET(
 		return new NextResponse('Internal Error', { status: 500 })
 	}
 }
+
+export async function DELETE(
+	req: Request,
+	{ params }: { params: { eventId: string } },
+) {
+	try {
+		const event = await db.event.delete({
+			where: {
+				id: params.eventId,
+			},
+			include: {
+				gallery: true,
+				Ticket: true,
+			},
+		})
+
+		return NextResponse.json(event)
+	} catch (error) {
+		console.log('[EVENT_ID]', error)
+		return new NextResponse('Internal Error', { status: 500 })
+	}
+}

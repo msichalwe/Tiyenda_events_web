@@ -12,11 +12,14 @@ const Admin = async () => {
 		redirect('/')
 	}
 
+	console.log(user);
+
 	const users = await db.user.findMany({
 		orderBy: {
 			createdAt: 'desc',
 		},
 	})
+
 
 	// @ts-ignore
 	const formattedUsers: UsersColumn[] = users.map((user) => {

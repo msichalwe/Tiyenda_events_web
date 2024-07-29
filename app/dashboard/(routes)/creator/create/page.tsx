@@ -19,6 +19,8 @@ import axios from 'axios'
 import toast from 'react-hot-toast'
 import { useSession } from 'next-auth/react'
 import { useCurrentUser } from '@/hooks/use-current-user'
+import {RotatingLines} from "react-loader-spinner";
+import React from "react";
 
 const formSchema = z.object({
 	name: z.string().min(1, 'Title is required'),
@@ -88,7 +90,16 @@ const CreatePage = () => {
 								</Button>
 							</Link>
 							<Button type="submit" disabled={!isValid || isSubmitting}>
-								Continue
+								{
+									isSubmitting ? <RotatingLines
+										visible={true}
+										width="30"
+										strokeColor={'white'}
+										strokeWidth="5"
+										animationDuration="0.75"
+										ariaLabel="rotating-lines-loading"
+									/> : 'Continue'
+								}
 							</Button>
 						</div>
 					</form>

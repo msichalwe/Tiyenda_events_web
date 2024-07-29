@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Event } from '@prisma/client'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { toast } from 'sonner'
 import * as z from 'zod'
 import {
@@ -20,6 +20,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import {RotatingLines} from "react-loader-spinner";
 
 interface RefundPolicyFormProps {
 	eventId: string
@@ -127,7 +128,16 @@ const RefundPolicyForm: React.FC<RefundPolicyFormProps> = ({
 						)}
 						<div className="flex items-center gap-x-2">
 							<Button type="submit" disabled={!isValid || isSubmitting}>
-								Save
+								{
+									isSubmitting ? <RotatingLines
+										visible={true}
+										width="30"
+										strokeColor={'white'}
+										strokeWidth="5"
+										animationDuration="0.75"
+										ariaLabel="rotating-lines-loading"
+									/> : 'Save'
+								}
 							</Button>
 						</div>
 					</form>

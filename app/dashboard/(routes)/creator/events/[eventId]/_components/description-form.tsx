@@ -15,12 +15,13 @@ import {
 	FormMessage,
 } from '@/components/ui/form'
 import { Pencil } from 'lucide-react'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Textarea } from '@/components/ui/textarea'
 import { Event } from '@prisma/client'
+import {RotatingLines} from "react-loader-spinner";
 
 const formSchema = z.object({
 	description: z.string().min(1, 'Description is required'),
@@ -110,7 +111,16 @@ const DescriptionForm: React.FC<DescriptionFormProps> = ({
 						/>
 						<div className="flex items-center gap-x-2">
 							<Button type="submit" disabled={!isValid || isSubmitting}>
-								Save
+								{
+									isSubmitting ? <RotatingLines
+										visible={true}
+										width="30"
+										strokeColor={'white'}
+										strokeWidth="5"
+										animationDuration="0.75"
+										ariaLabel="rotating-lines-loading"
+									/> : 'Save'
+								}
 							</Button>
 						</div>
 					</form>

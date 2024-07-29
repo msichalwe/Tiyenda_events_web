@@ -33,6 +33,7 @@ const Event = async ({ params }: { params: { eventId: string } }) => {
 		},
 	})
 
+
 	if (!event) {
 		return (
 			<div className="h-screen flex justify-center items-center">
@@ -56,7 +57,11 @@ const Event = async ({ params }: { params: { eventId: string } }) => {
 	// Filter out null values and find the lowest ticket price
 	const validPrices: number[] = tickets
 		.filter((ticket) => ticket.price !== null)
-		.map((ticket) => parseFloat(ticket.price!) as unknown as number) // Assert non-null type
+		.map((ticket) => parseFloat(ticket.price!.replace('ZMW', '').trim()))
+		.filter((price) => !isNaN(price));
+
+
+	console.log(validPrices);
 
 	const lowestTicketPrice: number | undefined =
 		validPrices.length > 0 ? Math.min(...validPrices) : undefined

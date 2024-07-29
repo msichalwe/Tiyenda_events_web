@@ -8,10 +8,23 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
+
 import { EventColumn } from './columns'
-import { Button } from '@/components/ui/button'
 import { useParams, useRouter } from 'next/navigation'
-import { Edit, Eye, MoreHorizontal } from 'lucide-react'
+import {Edit, Eye, MoreHorizontal, Trash} from 'lucide-react'
+import {useState} from "react";
 
 type CellActionProps = {
 	data: EventColumn
@@ -19,6 +32,15 @@ type CellActionProps = {
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 	const router = useRouter()
+	const [isOpen, setIsOpen] = useState<boolean>(true);
+
+
+
+
+	function onDelete(){
+
+	}
+
 	return (
 		<>
 			<DropdownMenu>
@@ -40,8 +62,50 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 						<Edit className="mr-2 h-4 w-4" />
 						Update
 					</DropdownMenuItem>
+
+					<AlertDialogTrigger asChild>
+
+					<DropdownMenuItem
+						onClick={onDelete}>
+						<Trash className="mr-2 h-4 w-4" />
+						Delete
+					</DropdownMenuItem>
+					</AlertDialogTrigger>
+
 				</DropdownMenuContent>
 			</DropdownMenu>
+
+
 		</>
 	)
 }
+
+
+
+interface AlertModalProps {
+	onCancel: () => void;
+	onContinue: () => void;
+}
+
+export function AlertModal({ onCancel, onContinue }: AlertModalProps) {
+	return (
+		<AlertDialog>
+			<AlertDialogTrigger asChild>
+				<Button variant="outline">Show Dialog</Button>
+			</AlertDialogTrigger>
+			<AlertDialogContent>
+				<AlertDialogHeader>
+					<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+					<AlertDialogDescription>
+						Are you sure you want to complete this action?
+					</AlertDialogDescription>
+				</AlertDialogHeader>
+				<AlertDialogFooter>
+					<AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel>
+					<AlertDialogAction onClick={onContinue}>Continue</AlertDialogAction>
+				</AlertDialogFooter>
+			</AlertDialogContent>
+		</AlertDialog>
+	);
+}
+

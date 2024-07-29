@@ -11,7 +11,7 @@ import {
 import { EventColumn } from './columns'
 import { Button } from '@/components/ui/button'
 import { useParams, useRouter } from 'next/navigation'
-import { Edit, Eye, MoreHorizontal } from 'lucide-react'
+import {Edit, Eye, MoreHorizontal, Trash} from 'lucide-react'
 
 type CellActionProps = {
 	data: EventColumn
@@ -19,6 +19,13 @@ type CellActionProps = {
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 	const router = useRouter()
+
+
+
+	function onDelete(){
+
+	}
+
 	return (
 		<>
 			<DropdownMenu>
@@ -41,6 +48,12 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 						onClick={() => router.push(`/dashboard/creator/events/${data.id}`)}>
 						<Edit className="mr-2 h-4 w-4" />
 						Update
+					</DropdownMenuItem>
+
+					<DropdownMenuItem
+						onClick={onDelete}>
+						<Trash className="mr-2 h-4 w-4" />
+						Delete
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>

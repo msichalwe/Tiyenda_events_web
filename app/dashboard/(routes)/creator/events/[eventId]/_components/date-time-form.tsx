@@ -18,13 +18,14 @@ import 'react-datetime-picker/dist/DateTimePicker.css'
 import 'react-calendar/dist/Calendar.css'
 import 'react-clock/dist/Clock.css'
 import { CalendarIcon, Pencil } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import { Event } from '@prisma/client'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import DateTimePicker from 'react-datetime-picker'
+import {RotatingLines} from "react-loader-spinner";
 
 export const revalidate = 0
 
@@ -148,7 +149,16 @@ const DateTimeForm: React.FC<DateTimeFormProps> = ({
 
 								<div className="flex items-center gap-x-2">
 									<Button type="submit" disabled={!isValid || isSubmitting}>
-										Save
+										{
+											isSubmitting ? <RotatingLines
+												visible={true}
+												width="30"
+												strokeColor={'white'}
+												strokeWidth="5"
+												animationDuration="0.75"
+												ariaLabel="rotating-lines-loading"
+											/> : 'Save'
+										}
 									</Button>
 								</div>
 							</form>

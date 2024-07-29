@@ -18,6 +18,8 @@ import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { useSession } from 'next-auth/react'
+import {useState} from "react";
+import {RotatingLines} from "react-loader-spinner";
 
 const formSchema = z.object({
 	name: z.string().min(1, 'Name is required'),
@@ -25,6 +27,7 @@ const formSchema = z.object({
 const CreatePage = () => {
 	const router = useRouter()
 	const session = useSession()
+
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -81,7 +84,16 @@ const CreatePage = () => {
 								</Button>
 							</Link>
 							<Button type="submit" disabled={!isValid || isSubmitting}>
-								Continue
+								{
+									isSubmitting ? <RotatingLines
+										visible={true}
+										width="30"
+										strokeColor={'white'}
+										strokeWidth="5"
+										animationDuration="0.75"
+										ariaLabel="rotating-lines-loading"
+									/> : 'Continue'
+								}
 							</Button>
 						</div>
 					</form>

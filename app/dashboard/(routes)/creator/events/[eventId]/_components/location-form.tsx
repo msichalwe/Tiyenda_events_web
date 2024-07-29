@@ -24,7 +24,7 @@ import {
 } from '@reach/combobox'
 import '@reach/combobox/styles.css'
 import { Pencil } from 'lucide-react'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import usePlacesAutocomplete, { 
@@ -38,6 +38,7 @@ import {
 	GoogleMapProps,
 } from '@react-google-maps/api'
 import { cn } from '@/lib/utils'
+import {RotatingLines} from "react-loader-spinner";
 
 export const revalidate = 0
 
@@ -207,7 +208,16 @@ const Map: React.FC<LocationFormProps> = ({ eventId, initialData }) => {
 											)}
 										</GoogleMap>
 									</div>
-									<Button disabled={isSubmitting}>Save</Button>
+									<Button disabled={isSubmitting}>{
+										isSubmitting ? <RotatingLines
+											visible={true}
+											width="30"
+											strokeColor={'white'}
+											strokeWidth="5"
+											animationDuration="0.75"
+											ariaLabel="rotating-lines-loading"
+										/> : 'Save'
+									}</Button>
 								</form>
 							</Form>
 						</>

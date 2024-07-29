@@ -21,6 +21,7 @@ import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Textarea } from '@/components/ui/textarea'
 import { Organizer } from '@prisma/client'
+import {RotatingLines} from "react-loader-spinner";
 
 export const revalidate = 0
 
@@ -152,7 +153,16 @@ const SocialsForm: React.FC<SocialsFormProps> = ({
 						/>
 						<div className="flex items-center gap-x-2">
 							<Button type="submit" disabled={!isValid || isSubmitting}>
-								Save
+								{
+									isSubmitting ? <RotatingLines
+										visible={true}
+										width="30"
+										strokeColor={'white'}
+										strokeWidth="5"
+										animationDuration="0.75"
+										ariaLabel="rotating-lines-loading"
+									/> : 'Save'
+								}
 							</Button>
 						</div>
 					</form>

@@ -2,8 +2,7 @@ import { User } from '@prisma/client'
 import axios from 'axios'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useCallback, useMemo } from 'react'
-
+import { useCallback, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
 interface IUseFollow {
@@ -14,6 +13,7 @@ interface IUseFollow {
 const useFollow = ({ organizerId, currentUser }: IUseFollow) => {
 	const router = useRouter()
 	const session = useSession()
+	const [isLoading, setIsLoading] = useState(false)
 
 	const hasFollowed = useMemo(() => {
 		const list = currentUser?.followedIds || []
@@ -29,11 +29,13 @@ const useFollow = ({ organizerId, currentUser }: IUseFollow) => {
 				return router.push('/auth/login')
 			}
 
+			setIsLoading(true)
+
 			try {
 				let request
 
 				if (hasFollowed) {
-					request = () => axios.delete(`/api/follow/${organizerId}`)
+					request = () => axios.patch(`/api/follow/${organizerId}`, { userId: currentUser.id })
 				} else {
 					request = () =>
 						axios.post(`/api/follow/${organizerId}`, { userId: currentUser.id })
@@ -44,6 +46,8 @@ const useFollow = ({ organizerId, currentUser }: IUseFollow) => {
 				toast.success('Success')
 			} catch (error) {
 				toast.error('Error')
+			} finally {
+				setIsLoading(false)
 			}
 		},
 		[currentUser, hasFollowed, organizerId, router],
@@ -52,6 +56,7 @@ const useFollow = ({ organizerId, currentUser }: IUseFollow) => {
 	return {
 		hasFollowed,
 		toggleFollow,
+		isLoading,
 	}
 }
 

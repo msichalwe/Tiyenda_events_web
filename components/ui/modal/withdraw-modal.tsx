@@ -28,6 +28,7 @@ import { Button } from '../button'
 import { useCurrentUser } from '@/hooks/use-current-user'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import {RotatingLines} from "react-loader-spinner";
 
 const WithdrawModal = () => {
 	const withdrawModal = useWithdrawalModal()
@@ -191,7 +192,16 @@ const WithdrawModal = () => {
 						/>
 					)}
 					<Button type="submit" disabled={!isValid || isSubmitting}>
-						Submit
+						{
+							isSubmitting ? <RotatingLines
+								visible={true}
+								width="30"
+								strokeColor={'white'}
+								strokeWidth="5"
+								animationDuration="0.75"
+								ariaLabel="rotating-lines-loading"
+							/> : 'Submit'
+						}
 					</Button>
 				</form>
 			</Form>

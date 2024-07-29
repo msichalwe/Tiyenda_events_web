@@ -167,6 +167,7 @@ enum InvitationStatus {
 enum CompanyRole {
   USER
   OWNER
+  ADMIN
 }
 
 enum EventStatus {

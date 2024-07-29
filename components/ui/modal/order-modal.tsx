@@ -57,6 +57,8 @@ const OrderModal: React.FC<OrderModalProps> = ({ isOpen }) => {
 		fetcher,
 	)
 
+	console.log(event)
+
 	if (isLoading) return <Loader2 className="h-6 w-6 animate-spin" />
 
 	return (
@@ -148,9 +150,11 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ ticketCounts, event }) => {
 
 	const subtotal = event.Ticket.reduce(
 		(total, ticket) =>
-			total + (ticketCounts[ticket.id] || 0) * parseFloat(ticket.price!),
+			total + (ticketCounts[ticket.id] || 0) * parseFloat(ticket.price!.replace('ZMW', '').trim()),
 		0,
-	)
+	);
+
+
 
 	const fees = subtotal * 0.1 // Assuming fees are 10% of the subtotal
 	const tax = subtotal * 0.1 // Assuming tax is 10% of the subtotal
@@ -197,10 +201,11 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ ticketCounts, event }) => {
 				<p key={ticket.id} className="text-sm text-slate-700 mb-2">
 					{ticketCounts[ticket.id] || 0} x {ticket.name}
 					<span className="float-right">
-						K{parseFloat(ticket.price!).toFixed(2)}
-					</span>
+			K{parseFloat(ticket.price!.replace('ZMW', '').trim()).toFixed(2)}
+		</span>
 				</p>
 			))}
+
 			<Separator />
 			<p className="text-sm text-slate-700 mb-2">
 				Subtotal<span className="float-right">K{subtotal.toFixed(2)}</span>
