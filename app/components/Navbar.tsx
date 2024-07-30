@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { LogOut } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import Link from 'next/link'
+import Link from '@/lib/link'
 import { MenuItem } from './menu-item'
 import { useRouter } from 'next/navigation'
 

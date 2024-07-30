@@ -7,9 +7,9 @@ export default function Loading() {
     const loadingMessages = [
         "Loading...",
         "Please wait...",
-        "Fetching data...",
+        "Pangono Chabe...",
         "Almost there...",
-        "Hang tight...",
+        "Panono fye...",
         "Just a moment...",
     ];
 
